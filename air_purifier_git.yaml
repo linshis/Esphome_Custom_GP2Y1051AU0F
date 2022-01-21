@@ -1,0 +1,60 @@
+esphome:
+  name: airpurifier
+  platform: ESP8266
+  board: nodemcu
+  includes:
+    - sharp_sensor.h
+    
+wifi:
+  ssid: "########"
+  password: "########"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "air_purifier Fallback Hotspot"
+    password: "########"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+    password: "########"
+ota:
+    password: "########"
+
+# custom sensor 
+uart:
+  id: uart_bus
+  tx_pin: 4 # No connected
+  rx_pin: 5
+  baud_rate: 2400
+
+sensor:
+  - platform: custom
+    lambda: |-
+      auto Dust_Sensor = new My_dust_Sensor(30000, id(uart_bus));
+      App.register_component(Dust_Sensor);
+      return {Dust_Sensor};
+    sensors:
+      name: "Dust sensor"
+      unit_of_measurement: "v"
+      accuracy_decimals: 3
+      
+#sensor:
+#- platform: custom
+#  lambda: |-
+#    auto dust_Sensor = new My_dust_Sensor(); 
+#    App.register_component(dust_Sensor);
+#    return {dust_Sensor};
+#    
+#  sensors:
+#    name: "Dust sensor"
+#    accuracy_decimals: 2
+#    unit_of_measurement: "v"
+#    # "unit_of_measurement" must be set, otherwise HA will show history like a "binary sensor", not line graph
+
+
+
